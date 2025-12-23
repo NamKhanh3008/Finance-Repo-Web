@@ -6,13 +6,19 @@ class AnnotationService:
     
     @staticmethod
     def get_annotations(file_id, user_id):
-        # Check ownership
-        file = File.query.filter_by(id=file_id, user_id=user_id).first()
+        # ONLY check that file exists
+        file = File.query.filter_by(id=file_id).first()
         if not file:
             return None
-        
-        notes = Annotation.query.filter_by(file_id=file_id).order_by(Annotation.page_number).all()
+
+        notes = (
+            Annotation.query
+            .filter_by(file_id=file_id)
+            .order_by(Annotation.page_number)
+            .all()
+        )
         return [note.to_dict() for note in notes]
+
 
     @staticmethod
     def add_annotation(user_id, data):
