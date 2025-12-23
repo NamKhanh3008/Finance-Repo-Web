@@ -61,4 +61,10 @@ def create_app():
     # You must add url_prefix="/api/annotations" here!
     app.register_blueprint(annotation_bp, url_prefix="/api/annotation")
 
+    
+
+    #6. Fork Routes
+    from app.routes.fork_routes import fork_bp
+    app.register_blueprint(fork_bp, url_prefix="/api/fork")
+
     return app
