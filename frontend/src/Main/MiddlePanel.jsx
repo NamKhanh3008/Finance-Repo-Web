@@ -1,26 +1,34 @@
-import React, { useMemo, useState, useEffect } from "react";
+import React, { useMemo, useState } from "react";
 import axios from "axios";
 
 import MiddlePanelUI from "./MiddlePanelUI";
 import { useFileDetails } from "../hooks/useFileDetails";
 import { useFileContent } from "../hooks/useFileContent";
 import { useDriveImport } from "../hooks/useDriveImport";
-import { useCliffnote } from "../hooks/useCliffnote";
 import { useDrawingTools } from "../hooks/useDrawingTools";
+import { useFileUpload } from "../hooks/useFileUpload";
 
 const API_BASE = "http://127.0.0.1:5000/api";
 
-function MiddlePanel({ selectedFile, readOnly }) {
+function MiddlePanel({
+  selectedFile,
+  readOnly,
+
+  // 🔽 NOW CONTROLLED BY WORKSPACE
+  annotations,
+  activeNoteId,
+  onNoteClick,
+  onAddNote,
+}) {
   const fileId = selectedFile?.id ?? null;
 
-  const { data: fileData, refetch: refetchMeta } = useFileDetails(fileId);
+  const { refetch: refetchMeta } = useFileDetails(fileId);
   const {
     data: fileBlob,
     isLoading: isContentLoading,
     refetch: refetchContent,
   } = useFileContent(fileId);
 
-  const { cliffnote, setCliffnote } = useCliffnote(fileId, readOnly);
   const { drawingColor, setDrawingColor } = useDrawingTools(readOnly);
 
   const previewUrl = useMemo(() => {
@@ -28,19 +36,10 @@ function MiddlePanel({ selectedFile, readOnly }) {
     return URL.createObjectURL(fileBlob);
   }, [fileBlob]);
 
-  const [activeNoteId, setActiveNoteId] = useState(null);
-  const [noteDraft, setNoteDraft] = useState("");
-
   /* ------------------------------------------------------------
-     🔥 OPTIMISTIC ANNOTATIONS STATE (INSTANT DRAW FIX)
+     OPTIMISTIC DRAW STATE (STAYS HERE)
   ------------------------------------------------------------ */
   const [optimisticAnnotations, setOptimisticAnnotations] = useState([]);
-
-  // Initialize draft when active note changes
-  useEffect(() => {
-    const active = fileData?.annotations?.find((n) => n.id === activeNoteId);
-    setNoteDraft(active?.content ?? "");
-  }, [activeNoteId, fileData]);
 
   const drive = useDriveImport(
     localStorage.getItem("authToken"),
@@ -50,14 +49,8 @@ function MiddlePanel({ selectedFile, readOnly }) {
     }
   );
 
-  /* ------------------------------------------------------------
-     NOTE HANDLERS
-  ------------------------------------------------------------ */
-
-  const handleNoteClick = (noteId) => setActiveNoteId(noteId);
-
-  // ✅ OPTIMISTIC ADD NOTE (INSTANT BOX DRAW)
-  const handleAddNote = async (noteData) => {
+  // ✅ OPTIMISTIC ADD NOTE (DRAWING ONLY)
+  const handleAddNoteOptimistic = async (noteData) => {
     if (readOnly || !fileId) return;
 
     const tempId = `temp-${Date.now()}`;
@@ -67,11 +60,9 @@ function MiddlePanel({ selectedFile, readOnly }) {
       ...noteData,
     };
 
-    // 1️⃣ Draw instantly
     setOptimisticAnnotations((prev) => [...prev, optimisticNote]);
 
     try {
-      // 2️⃣ Save to backend
       await axios.post(
         `${API_BASE}/annotation/${fileId}`,
         { ...noteData, file_id: fileId },
@@ -82,94 +73,52 @@ function MiddlePanel({ selectedFile, readOnly }) {
         }
       );
 
-      // 3️⃣ Sync with backend
       setOptimisticAnnotations([]);
       refetchMeta();
+
+      // 🔁 notify Workspace if needed
+      onAddNote?.();
     } catch (err) {
       console.error("Failed to add note", err);
-
-      // ❌ Rollback optimistic note
       setOptimisticAnnotations((prev) =>
         prev.filter((n) => n.id !== tempId)
       );
     }
   };
 
-  // Save draft immediately + debounce backend
-  const handleUpdateNoteDraft = (noteId, content) => {
-    setNoteDraft(content);
-    if (readOnly || !noteId) return;
+  const mergedAnnotations = [
+    ...optimisticAnnotations,
+    ...(Array.isArray(annotations) ? annotations : []),
+  ];
 
-    clearTimeout(window.noteSaveTimeout);
-    window.noteSaveTimeout = setTimeout(async () => {
-      try {
-        await axios.put(
-          `${API_BASE}/annotation/${noteId}`,
-          { content },
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("authToken")}`,
-            },
-          }
-        );
-        refetchMeta();
-      } catch (err) {
-        console.error("Failed to save note", err);
-      }
-    }, 300);
+  const uploadMutation = useFileUpload(fileId);
+
+  const handleFileUpload = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    uploadMutation.mutate(file);
+    e.target.value = "";
   };
-
-  const handleDeleteNote = async (noteId) => {
-    if (readOnly) return;
-    if (!window.confirm("Delete this highlight?")) return;
-
-    try {
-      await axios.delete(`${API_BASE}/annotation/${noteId}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("authToken")}`,
-        },
-      });
-      refetchMeta();
-      if (activeNoteId === noteId) setActiveNoteId(null);
-    } catch (err) {
-      alert("Failed to delete note");
-    }
-  };
-
-  /* ------------------------------------------------------------
-     MERGED ANNOTATIONS (SERVER + OPTIMISTIC)
-  ------------------------------------------------------------ */
-
-  const serverAnnotations = Array.isArray(fileData?.annotations)
-    ? fileData.annotations
-    : [];
-
-  const annotations = [...optimisticAnnotations, ...serverAnnotations];
-
-  const activeNote =
-    annotations.find((n) => n.id === activeNoteId) || null;
 
   return (
     <>
       <MiddlePanelUI
         selectedFile={selectedFile}
         currentFileName={selectedFile?.name}
-        content={cliffnote}
-        onContentChange={setCliffnote}
         previewUrl={previewUrl}
         isLoading={isContentLoading}
-        annotations={annotations}
-        activeNote={activeNote}
-        noteDraft={noteDraft}
-        onNoteDraftChange={handleUpdateNoteDraft}
+
+        annotations={mergedAnnotations}
         activeNoteId={activeNoteId}
+        onNoteClick={onNoteClick}
+        onAddNote={handleAddNoteOptimistic}
+
         readOnly={readOnly}
         drawingColor={drawingColor}
         onSetDrawingColor={setDrawingColor}
-        onNoteClick={handleNoteClick}
-        onAddNote={handleAddNote}
-        onDeleteNote={handleDeleteNote}
+
         onOpenDrive={drive.fetchDriveFiles}
+        onFileUpload={handleFileUpload}
       />
 
       {drive.showModal && !readOnly && (
@@ -178,6 +127,7 @@ function MiddlePanel({ selectedFile, readOnly }) {
             <h3 className="font-bold mb-4 text-gray-800">
               Import from Google Drive
             </h3>
+
             <div className="flex-1 overflow-y-auto border border-gray-100 rounded">
               {drive.driveFiles.map((f) => (
                 <div
@@ -196,6 +146,7 @@ function MiddlePanel({ selectedFile, readOnly }) {
                 </div>
               ))}
             </div>
+
             <button
               onClick={() => drive.setShowModal(false)}
               className="mt-4 w-full py-2 bg-gray-100 text-gray-600 rounded"

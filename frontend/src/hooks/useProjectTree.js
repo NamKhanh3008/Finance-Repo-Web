@@ -26,8 +26,8 @@ export const useProjectTree = (projectRootId) => {
         enabled: !!localStorage.getItem("authToken") && !!projectRootId, 
     });
 
-    const invalidate = () => queryClient.invalidateQueries(['projectTree']);
-
+    const invalidate = () =>
++   queryClient.invalidateQueries(['projectTree', projectRootId]);
     // ... (Mutation logic stays the same)
     const createFolder = useMutation({
         mutationFn: ({ name, parentId }) => 
