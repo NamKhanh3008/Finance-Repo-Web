@@ -8,3 +8,6 @@ requests
 SQLAlchemy
 Flask-Migrate
 supabase
+gunicorn
+Flask-Caching
+yfinance
