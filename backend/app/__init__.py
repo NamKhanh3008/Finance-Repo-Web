@@ -4,7 +4,7 @@ from flask_jwt_extended import JWTManager
 from flask_migrate import Migrate
 from flask_cors import CORS
 from flask_caching import Cache
-from app.db.database import db
+from backend.app.db.database import db
 
 # Initialize extensions
 migrate = Migrate()
