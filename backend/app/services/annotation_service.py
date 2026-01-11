@@ -1,6 +1,6 @@
 # app/services/annotation_service.py
-from app.db.database import db
-from app.models import Annotation, File
+from ..db.database import db
+from ..models import Annotation, File
 
 class AnnotationService:
     

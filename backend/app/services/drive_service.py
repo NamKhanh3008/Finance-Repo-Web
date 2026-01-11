@@ -1,7 +1,7 @@
 import requests
 from flask import current_app
-from app.db.database import db
-from app.models import User
+from ..db.database import db
+from ..models import User
 
 class DriveService:
     

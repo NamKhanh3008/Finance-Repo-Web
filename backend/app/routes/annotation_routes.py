@@ -2,8 +2,8 @@
 
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from app.services.annotation_service import AnnotationService
-from app.routes.middleware import require_permission # <--- Import this
+from ..services.annotation_service import AnnotationService
+from .middleware import require_permission # <--- Import this
 
 annotation_bp = Blueprint("annotation_bp", __name__)
 

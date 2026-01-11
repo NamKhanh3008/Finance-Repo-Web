@@ -1,8 +1,8 @@
 # app/routes/auth_routes.py
 from flask import Blueprint, request, redirect, current_app, jsonify
-from app.services.auth_service import AuthService
+from ..services.auth_service import AuthService
 from flask_jwt_extended import jwt_required, get_jwt_identity # <--- ADD THIS
-from app.models import User
+from ..models import User
 
 auth_bp = Blueprint("auth_bp", __name__, url_prefix="/api/auth")
 #worked but didn't put token into the URL

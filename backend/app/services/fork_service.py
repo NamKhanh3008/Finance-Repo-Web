@@ -1,6 +1,6 @@
 # app/services/fork_service.py
-from app.db.database import db
-from app.models import Folder, File, Annotation
+from ..db.database import db
+from ..models import Folder, File, Annotation
 
 class ForkService:
 

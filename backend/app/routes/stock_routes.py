@@ -1,8 +1,8 @@
 # app/routes/stock_routes.py
 from flask import Blueprint, jsonify
 from flask_jwt_extended import jwt_required
-from app.services.stock_service import StockService
-from app import cache  # <--- Import the global cache
+from ..services.stock_service import StockService
+from .. import cache  # <--- Import the global cache
 
 stock_bp = Blueprint('stock_bp', __name__, url_prefix="/api/stock")
 

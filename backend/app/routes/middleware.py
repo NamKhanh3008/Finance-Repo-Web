@@ -1,7 +1,7 @@
 from functools import wraps
 from flask import jsonify, request
 from flask_jwt_extended import get_jwt_identity
-from app.models import File, Folder, ProjectShare
+from ..models import File, Folder, ProjectShare
 
 
 def require_permission(access='VIEW'):

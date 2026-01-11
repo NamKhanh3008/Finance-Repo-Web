@@ -1,6 +1,6 @@
 # app/services/auth_service.py
-from app.models import User
-from app.db.database import db
+from ..models import User
+from ..db.database import db
 from flask_jwt_extended import create_access_token
 import requests
 

@@ -1,7 +1,7 @@
 # app/routes/fork_routes.py
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from app.services.fork_service import ForkService
+from ..services.fork_service import ForkService
 
 fork_bp = Blueprint("fork_bp", __name__)
 

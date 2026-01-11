@@ -7,11 +7,11 @@ from supabase import create_client, Client
 import os
 import requests
 
-from app.services.file_service import FileService
-from app.services.drive_service import DriveService
-from app.models import User, File, Folder, ProjectShare  # <--- Added ProjectShare, Folder
-from app.db.database import db
-from app.routes.middleware import require_permission  # <--- Added Middleware
+from ..services.file_service import FileService
+from ..services.drive_service import DriveService
+from ..models import User, File, Folder, ProjectShare, Annotation  # <--- Added ProjectShare, Folder, Annotation
+from ..db.database import db
+from .middleware import require_permission  # <--- Added Middleware
 
 # -------------------------------------------------------------------
 # 1. BLUEPRINT & CONFIGURATION

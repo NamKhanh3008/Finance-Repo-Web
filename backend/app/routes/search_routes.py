@@ -1,7 +1,7 @@
 # app/routes/search_routes.py
 from flask import Blueprint, request, jsonify
-from app.services.news_service import NewsService
-from app import cache 
+from ..services.news_service import NewsService
+from .. import cache 
 
 search_bp = Blueprint('search_bp', __name__)
 

@@ -2,9 +2,9 @@
 
 
 
-from app.models import Folder, File, ProjectShare
+from ..models import Folder, File, ProjectShare
 
-from app.db.database import db
+from ..db.database import db
 
 
 
