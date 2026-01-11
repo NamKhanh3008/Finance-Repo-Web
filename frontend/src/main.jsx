@@ -5,7 +5,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-d
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import "./index.css";
-import Login from "./Login/login.jsx";
+import Login from "./Login/Login.jsx";
 import AuthRedirect from "./Login/AuthRedirect.jsx";
 import Dashboard from "./Main/Dashboard.jsx";
 import Workspace from "./Main/Workspace.jsx"; 
