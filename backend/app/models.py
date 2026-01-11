@@ -1,4 +1,4 @@
-from app.db.database import db
+from .db.database import db
 from datetime import datetime
 
 # --- 1. NEW TABLE: ProjectShare ---
