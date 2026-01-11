@@ -66,5 +66,6 @@ def create_app():
     #6. Fork Routes
     from .routes.fork_routes import fork_bp
     app.register_blueprint(fork_bp, url_prefix="/api/fork")
+    print("### VERSION CHECK: RELATIVE IMPORT FIX APPLIED ###")
 
     return app
