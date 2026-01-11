@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 
+const API_BASE = import.meta.env.VITE_API_BASE_URL;
 const getToken = () => localStorage.getItem("authToken");
 
 export const useRenameNode = (projectRootId) => {
@@ -13,7 +14,7 @@ export const useRenameNode = (projectRootId) => {
     mutationFn: ({ id, name }) => {
       const token = getToken();
       return axios.put(
-        `http://127.0.0.1:5000/api/file/${id}`,
+        `${API_BASE}/file/${id}`,
         { name },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -25,7 +26,7 @@ export const useRenameNode = (projectRootId) => {
     mutationFn: ({ id, name }) => {
       const token = getToken();
       return axios.put(
-        `http://127.0.0.1:5000/api/folder/${id}`,
+        `${API_BASE}/folder/${id}`,
         { name },
         { headers: { Authorization: `Bearer ${token}` } }
       );

@@ -1,6 +1,8 @@
 import { useState } from "react";
 import axios from "axios";
 
+const API_BASE = import.meta.env.VITE_API_BASE_URL;
+
 export function useForkProject() {
   const [loadingId, setLoadingId] = useState(null);
   const token = localStorage.getItem("authToken");
@@ -11,7 +13,7 @@ export function useForkProject() {
 
     try {
       const response = await axios.post(
-        `http://127.0.0.1:5000/api/fork/${folderId}`,
+        `${API_BASE}/fork/${folderId}`,
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );

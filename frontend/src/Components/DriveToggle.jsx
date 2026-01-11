@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
 
+const API_BASE = import.meta.env.VITE_API_BASE_URL;
+
 export const DriveToggle = () => {
   const [isConnected, setIsConnected] = useState(false);
   const [loading, setLoading] = useState(true); // Added loading state for better UX
@@ -20,7 +22,7 @@ export const DriveToggle = () => {
 
       try {
         // Query the DB to see if Drive is TRULY connected
-        const res = await fetch("http://127.0.0.1:5000/api/auth/me", {
+        const res = await fetch(`${API_BASE}/auth/me`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         
@@ -50,7 +52,7 @@ export const DriveToggle = () => {
     if (!isConnected) {
       // Connect: Get URL -> Redirect to Google
       try {
-        const res = await fetch("http://127.0.0.1:5000/api/auth/connect-drive", {
+        const res = await fetch(`${API_BASE}/auth/connect-drive`, {
           headers: { 
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json"
@@ -69,7 +71,7 @@ export const DriveToggle = () => {
     } else {
       // Disconnect: Call API -> Update UI
       try {
-        await fetch("http://127.0.0.1:5000/api/auth/disconnect-drive", {
+        await fetch(`${API_BASE}/auth/disconnect-drive`, {
           method: "POST",
           headers: { Authorization: `Bearer ${token}` }
         });

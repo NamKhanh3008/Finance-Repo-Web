@@ -23,10 +23,12 @@ const GoogleIcon = () => (
   </svg>
 );
 
+const API_BASE = import.meta.env.VITE_API_BASE_URL;
+
 export default function Login() {
 
   const handleGoogleLogin = () => {
-    window.location.href = "http://127.0.0.1:5000/api/auth/login";
+    window.location.href = `${API_BASE}/auth/login`;
   };
 
   return (

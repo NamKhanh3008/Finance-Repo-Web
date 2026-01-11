@@ -2,7 +2,7 @@ import { useState, useCallback } from 'react';
 
 import axios from 'axios';
 
-
+const API_BASE = import.meta.env.VITE_API_BASE_URL;
 
 const getToken = () => localStorage.getItem('authToken');
 
@@ -24,7 +24,7 @@ export const useAnnotations = () => {
 
             const token = getToken();
 
-            const res = await axios.get(`http://127.0.0.1:5000/api/annotation/file/${fileId}`, {
+            const res = await axios.get(`${API_BASE}/annotation/file/${fileId}`, {
 
                 headers: { Authorization: `Bearer ${token}` }
 
@@ -110,7 +110,7 @@ export const useAnnotations = () => {
 
             const res = await axios.post(
 
-                `http://127.0.0.1:5000/api/annotation/${fileId}`,
+                `${API_BASE}/annotation/${fileId}`,
 
                 payload,
 
@@ -204,7 +204,7 @@ export const useAnnotations = () => {
 
             await axios.put(
 
-                `http://127.0.0.1:5000/api/annotation/${id}`,
+                `${API_BASE}/annotation/${id}`,
 
                 payload,
 
@@ -242,7 +242,7 @@ export const useAnnotations = () => {
 
             const token = getToken();
 
-            await axios.delete(`http://127.0.0.1:5000/api/annotation/${id}`, {
+            await axios.delete(`${API_BASE}/annotation/${id}`, {
 
                 headers: { Authorization: `Bearer ${token}` }
 

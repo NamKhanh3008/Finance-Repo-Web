@@ -10,6 +10,8 @@ import { useCliffnote } from "../hooks/useCliffnote";
 import { useFileDetails } from "../hooks/useFileDetails";
 import { useUpdateNote } from "../hooks/useUpdateNote";
 
+const API_BASE = import.meta.env.VITE_API_BASE_URL;
+
 
 function Workspace() {
   const {
@@ -69,7 +71,7 @@ function Workspace() {
     if (!window.confirm("Delete this highlight?")) return;
 
     try {
-      await fetch(`http://127.0.0.1:5000/api/annotation/${noteId}`, {
+      await fetch(`${API_BASE}/annotation/${noteId}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("authToken")}`,

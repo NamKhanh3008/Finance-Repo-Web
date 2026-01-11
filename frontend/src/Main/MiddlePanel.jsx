@@ -8,7 +8,7 @@ import { useDriveImport } from "../hooks/useDriveImport";
 import { useDrawingTools } from "../hooks/useDrawingTools";
 import { useFileUpload } from "../hooks/useFileUpload";
 
-const API_BASE = "http://127.0.0.1:5000/api";
+const API_BASE = import.meta.env.VITE_API_BASE_URL;
 
 function MiddlePanel({
   selectedFile,

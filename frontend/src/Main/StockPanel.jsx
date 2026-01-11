@@ -3,6 +3,8 @@ import React, { useState } from "react";
 import axios from "axios";
 import StockPanelUI from "./StockPanelUI"; // Import the dumb UI
 
+const API_BASE = import.meta.env.VITE_API_BASE_URL;
+
 function StockPanel() {
   // --- STATE ---
   const [searchTerm, setSearchTerm] = useState("");
@@ -28,10 +30,10 @@ function StockPanel() {
       // 2. Fire BOTH requests in parallel using Promise.allSettled
       // This is faster than waiting for one, then the other.
       const [stockRes, newsRes] = await Promise.allSettled([
-        axios.get(`http://127.0.0.1:5000/api/stock/${ticker}`, {
+        axios.get(`${API_BASE}/stock/${ticker}`, {
             headers: { Authorization: `Bearer ${token}` }
         }),
-        axios.get(`http://127.0.0.1:5000/api/news/${ticker}`, {
+        axios.get(`${API_BASE}/news/${ticker}`, {
             headers: { Authorization: `Bearer ${token}` }
         })
       ]);
