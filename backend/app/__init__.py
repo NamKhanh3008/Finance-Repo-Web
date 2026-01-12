@@ -1,4 +1,5 @@
 # app/__init__.py
+import os
 from flask import Flask
 from flask_jwt_extended import JWTManager
 from flask_migrate import Migrate
@@ -20,9 +21,10 @@ def create_app():
     app.config.from_object("backend.config.Config")
 
     # Enable CORS
+    cors_origins = os.getenv("CORS_ORIGINS", "http://localhost:5173").split(",")
     CORS(
     app,
-    resources={r"/api/*": {"origins": "http://localhost:5173"}},
+    resources={r"/api/*": {"origins": cors_origins}},
     supports_credentials=True
 )
 
